@@ -30,7 +30,7 @@ public class Criteria {
 		return type == null ? new String[] {}: type.split("");
 	}
 	
-	//UriCOmponentsBuilder 여러개의 파라미터를 연결해서 하나의 URL을 제공
+	//UriComponentsBuilder 여러개의 파라미터를 연결해서 하나의 URL을 제공
 	public String getListLink() {
 		UriComponentsBuilder builder= UriComponentsBuilder.fromPath("")
 				.queryParam("pageNum", this.pageNum)
