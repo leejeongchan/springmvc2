@@ -49,6 +49,20 @@
 	</div>
 </div>
 <%@ include file="../includes/footer.jsp" %>
+<script type="text/javascript" src="/resources/js/reply.js"></script>
+<script type="text/javascript">
+console.log("============");
+console.log("JS TEST");
+
+var bnoValue='<c:out value="${board.bno}"/>';
+
+//for Reply add test
+replyService.add({reply:"JS Test",replyer:"tester",bno:bnoValue},
+		function(result){
+			alert("RESULT: "+result); //success가 뜰 것임.
+		}
+);
+</script>
 <script type="text/javascript">
 	$(document).ready(function(){
 		var operForm=$("#operForm");

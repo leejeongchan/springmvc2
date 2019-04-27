@@ -20,7 +20,7 @@ import org.zerock.service.ReplyService;
 
 import lombok.Setter;
 import lombok.extern.log4j.Log4j;
-
+//보통 ajax시 사용
 @RequestMapping("/replies/")
 @RestController
 @Log4j
