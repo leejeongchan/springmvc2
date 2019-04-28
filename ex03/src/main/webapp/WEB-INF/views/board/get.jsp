@@ -57,11 +57,26 @@ console.log("JS TEST");
 var bnoValue='<c:out value="${board.bno}"/>';
 
 //for Reply add test
-replyService.add({reply:"JS Test",replyer:"tester",bno:bnoValue},
+/*replyService.add({reply:"JS Test",replyer:"tester",bno:bnoValue},
 		function(result){
 			alert("RESULT: "+result); //success가 뜰 것임.
 		}
-);
+);*/
+//for Reply list test
+replyService.getList({bno:bnoValue,page:1},function(list){
+	for(var i=0,len=list.length||0; i<len; i++){
+		console.log(list[i]);	
+	}
+});
+//for Reply delete test
+replyService.remove(5,function(count){
+	console.log(count);
+	if(count == "success"){
+		alert("REMOVED");
+	}
+},function(err){
+	alert("ERROR....");
+});
 </script>
 <script type="text/javascript">
 	$(document).ready(function(){
