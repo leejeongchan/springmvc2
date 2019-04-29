@@ -57,9 +57,44 @@ var replyService=(function(){
 			}
 		});
 	}
-	
+	//댓글 수정
+	function update(reply,callback,error){
+		console.log("RNO: "+reply.rno);
+		$.ajax({
+			type: 'put',
+			url: '/replies/'+reply.rno,
+			data: JSON.stringify(reply),
+			contentType: "application/json; charset=utf-8",
+			success: function(result,status,xhr){
+				if(callback){
+					callback(result); //success
+				}
+			},
+			error: function(xhr,status,er){
+				if(error){
+					error(er);
+				}
+			}
+		});
+	}
+	//특정 댓글 조회
+	function get(rno,callback,error){
+		$.get("/replies/"+rno+".json",function(result){
+			if(callback){
+				callback(result);
+			}
+			
+		}).fail(function(xhr,status,err){
+			if(error){
+				error();
+			}
+			
+		});
+	}
 	return {add:add,
 			getList:getList,
-			remove: remove
+			remove: remove,
+			update: update,
+			get: get
 			};
 })();
