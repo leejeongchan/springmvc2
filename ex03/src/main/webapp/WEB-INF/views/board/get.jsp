@@ -68,17 +68,10 @@
 
 			<div class="panel-body">
 				<ul class="chat">
-					<li class="left clearfix" data-rno='12'>
-						<div>
-							<div class="header">
-								<strong class="primary-font">user00</strong> <small
-									class="pull-right text-muted">2019-04-29 13:13</small>
-
-							</div>
-							<p>Good job!</p>
-						</div>
-					</li>
+					
 				</ul>
+			</div>
+			<div class="panel-footer">
 			</div>
 		</div>
 	</div>
@@ -197,16 +190,22 @@
 												bno : bnoValue,
 												page : page || 1
 											},
-											function(list) {
+											function(replyCnt,list) {
+												//처음 댓글 등록시 -1을 주어서 전체 댓글 수를 파악후 마지막으로 이동
+												if(page == -1){
+													pageNum = Math.ceil(replyCnt/10.0);
+													showList(pageNum);
+												}
+												
 												var str = "";
 												if (list == null
 														|| list.length == 0) {
-													replyUL.html("");
+													//replyUL.html("");
 													return;
 												}
 												for (var i = 0, len = list.length || 0; i < len; i++) {
 													str += "<li class='left clearfix' data-rno='"+list[i].rno+"'>";
-													str += "  <div><div class='header'><strong class='priamry-font'>"
+													str += "  <div><div class='header'><strong class='priamry-font'>["+list[i].rno+"]"
 															+ list[i].replyer
 															+ "</strong>";
 													str += "		<small class='pull-right text-muted'>"
@@ -218,6 +217,8 @@
 															+ "</p></div></li>";
 												}
 												replyUL.html(str);
+												
+												showReplyPage(replyCnt);
 											}); //end function
 						}//end showList
 						
@@ -256,12 +257,12 @@
 								modal.find("input").val(""); //댓글 등록 후 다시 비우기
 								modal.modal("hide"); //그 다음 모달창 숨기기
 								
-								showList(1); // 다시 목록 갱신 해주기 
+								showList(-1); // 다시 목록 갱신 해주기 
 							});
 							
 						});
 						
-						//특정 댓글조회 이벤트 처리
+						//특정 댓글조회 이벤트 처리 동적 자바스크립트 이기 때문
 						$(".chat").on("click","li",function(e){
 							
 							var rno = $(this).data("rno");
@@ -293,7 +294,7 @@
 							replyService.update(reply,function(result){
 								alert(result);
 								modal.modal("hide");
-								showList(1);
+								showList(pageNum);
 							});
 						});
 						
@@ -305,8 +306,63 @@
 							replyService.remove(rno,function(result){
 								alert(result);
 								modal.modal("hide");
-								showList(1);
+								showList(pageNum);
 							});
+						});
+						
+						var pageNum =1;
+						var replyPageFooter = $(".panel-footer");
+						//페이지네이션
+						function showReplyPage(replyCnt){
+							var endNum = Math.ceil(pageNum/10.0)*10; 
+							var startNum = endNum-9; // 시작페이지 번호
+							
+							var prev = startNum !=1;
+							var next = false;
+							
+							if(endNum*10 >= replyCnt){
+								endNum = Math.ceil(replyCnt/10.0);
+							}
+							if(endNum*10 < replyCnt){
+								next=true;
+							}
+							
+							var str="<ul class='pagination pull-right'>";
+							
+							if(prev){
+								str+="<li class='page-item'><a class='page-link' href='"+(startNum-1)+"'>Previous</a></li>";
+							}
+							
+							for(var i=startNum; i<=endNum; i++){
+								var active = pageNum == i?"active":"";
+								
+								str+="<li class='page-item "+active+" '><a class='page-link' href='"+i+"'>"+i+"</a></li>";
+								
+							}
+							
+							if(next){
+								str+="<li class='page-item'><a class='page-link' href='"+(endNum+1)+"'>Next</a></li>";
+								
+							}
+							
+							str +="</ul></div>";
+							
+							console.log(str);
+							
+							replyPageFooter.html(str);
+							
+						}
+						
+						replyPageFooter.on("click","li a",function(e){
+							e.preventDefault();
+							console.log("page click");
+							
+							var targetPageNum = $(this).attr("href");
+							
+							console.log("targetPageNum: "+targetPageNum);
+							
+							pageNum = targetPageNum;
+							showList(pageNum);
 						});
 					});
 </script>
