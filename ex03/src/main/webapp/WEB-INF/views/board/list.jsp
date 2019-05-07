@@ -38,7 +38,8 @@
 							<td><c:out value="${board.bno}" /></td>
 							<!-- 자바스크립트로 이동 처리하기 페이지 이동후 게시글 조회후 다시 목록으로 이동시 1페이지로 이동하는것을 방지 -->
 							<td><a class='move' href='<c:out value="${board.bno}"/>'><c:out
-										value="${board.title}" /></a></td>
+										value="${board.title}" /> <b>[<c:out value="${board.replyCnt}"/>]</b>
+										</a></td>
 							<td><c:out value="${board.writer}" /></td>
 							<td><fmt:formatDate pattern="yyyy-MM-dd"
 									value="${board.regdate}" /></td>
