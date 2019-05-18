@@ -48,7 +48,14 @@ public class BoardController {
 	@PostMapping("/register")
 	public String register(BoardVO board,RedirectAttributes rttr)
 	{
+		log.info("=====================================");
+		
 		log.info("register: "+board);
+		if(board.getAttachList()!=null) {
+			board.getAttachList().forEach(attach ->log.info(attach));
+		}
+		log.info("=====================================");
+
 		service.register(board);
 		//등록 글 번호 모달 창 띄우기 위함
 		rttr.addFlashAttribute("result",board.getBno());
