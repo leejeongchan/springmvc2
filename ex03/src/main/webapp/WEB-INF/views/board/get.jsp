@@ -3,7 +3,52 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ include file="../includes/header.jsp"%>
-
+<style>
+	.uploadResult {
+		width:100%;
+		background-color:gray;
+	}
+	
+	.uploadResult ul{
+		display:flex;
+		flex-flow:row;
+		justify-content:center;
+		align-items:center;
+	}
+	
+	.uploadResult ul li{
+		list-style: none;
+		padding:10px;
+		align-context:center;
+		text-align:center;
+	}
+	
+	.uploadResult ul li img{
+		width:200px;
+	}
+	
+	.bigPictureWrapper{
+		position: absolute;
+		display: none;
+		justify-content: center;
+		align-items: center;
+		top:0%;
+		width:100%;
+		height:100%;
+		background-color: gray;
+		z-index: 100;
+		background:rgba(255,255,255,0.5);
+	}
+	.bigPicture{
+		position: relative;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+	.bigPicture img{
+		width: 600px;
+	}
+</style>
 <div class="row">
 	<div class="col-lg-12">
 		<h1 class="page-header">Board Read</h1>
@@ -55,7 +100,27 @@
 		</div>
 	</div>
 </div>
+<!-- 첨부파일 -->
+<div class='bigPictureWrapper'>
+	<div class='bigPicture'>
+	</div>
+</div> 
+<div class="row">
+	<div class="col-lg-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">Files</div>
+			<div class="panel-body">
+				<div class='uploadResult'>
+					<ul>
+					</ul>
+				</div>
+			
+			</div>
+		</div>
+	</div>
+</div>
 <!-- 댓글 -->
+
 <div class="row">
 	<div class="col-lg-12">
 		<div class="panel panel-default">
@@ -159,9 +224,26 @@
 </script>
 
 <script type="text/javascript">
+
+function showImage(fileCallPath){
+	//alert(fileCallPath);
+	
+	$(".bigPictureWrapper").css("display","flex").show();
+	
+	$(".bigPicture").html("<img src='/display?fileName="+fileCallPath+"'>")
+	.animate({width:'100%',height:'100%'},1000);
+	
+	$(".bigPictureWrapper").on("click",function(e){
+		$(".bigPicture").animate({width:'0%',height:'0%'},1000);
+		setTimeout(function(){
+			$('.bigPictureWrapper').hide();
+		},1000);
+	});
+	
+}
 	$(document).ready(function() {
 		var operForm = $("#operForm");
-
+		
 		$("button[data-oper='modify']").on("click", function(e) {
 			operForm.attr("action", "/board/modify").submit();
 		});
@@ -171,8 +253,64 @@
 			operForm.attr("action", "/board/list").submit();
 
 		});
+		
+		
+		$(".uploadResult").on("click","li",function(e){
+			
+			console.log("view Image");
+			var liObj = $(this);
+			
+			var path = encodeURIComponent(liObj.data("path")+"/"+liObj.data("uuid")+"_"+liObj.data("filename"));
+			
+			//이미지 일 경우
+			if(liObj.data("type")){
+				showImage(path.replace(new RegExp(/\\/g),"/"));
+				
+			}else{
+				//일반파일 경우 다운로드
+				self.location="/download?fileName="+path
+			}
+		});
+		
 	});
 </script>
+<!-- 첨부파일 조회 -->
+<script>
+$(document).ready(function(){
+	(function(){
+		var bno = '<c:out value="${board.bno}"/>';
+		
+		$.getJSON("/board/getAttachList",{bno:bno},function(arr){
+			console.log(arr);
+			
+			var str = "";
+			
+			$(arr).each(function(i,attach){
+				
+				//image Type
+				if(attach.fileType){
+					var fileCallPath = encodeURIComponent(attach.uploadPath+"/s_"+attach.uuid+"_"+attach.fileName);
+					
+					str += "<li data-path='"+attach.uploadPath+"' data-uuid='"+attach.uuid+"' data-filename='"+attach.fileName+"' data-type='"+attach.fileType+"'><div>";
+					str += "<img src='/display?fileName="+fileCallPath+"'>";
+					str += "</div>";
+					str += "</li>";
+				}else{
+					str += "<li data-path='"+attach.uploadPath+"' data-uuid='"+attach.uuid+"' data-filename='"+attach.fileName+"' data-type='"+attach.fileType+"'><div>";
+					str += "<span> "+attach.fileName+"</span><br/>";
+					str += "<img src='/resources/img/attach.jpg'>";
+					str += "</div>";
+					str += "</li>";
+				}
+			});
+			
+			$(".uploadResult ul").html(str);
+		});
+	})();
+});
+
+</script>
+
 <!-- 댓글 이벤트 처리(댓글 목록가져와서 li 태그구성+모달창 댓글 등록 , 모달창 띄우기 등등) -->
 <script>
 	$(document)
