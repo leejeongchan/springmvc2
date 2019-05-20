@@ -36,7 +36,7 @@ public class BoardServiceImpl implements BoardService{
 		if(board.getAttachList()==null || board.getAttachList().size()<=0) {
 			return;
 		}
-		
+		//form에서 hidden으로 첨부파일 정보가 날라옴
 		board.getAttachList().forEach(attach->{
 			attach.setBno(board.getBno());
 			attachMapper.insert(attach);
@@ -63,6 +63,9 @@ public class BoardServiceImpl implements BoardService{
 	public boolean remove(Long bno) {
 		// TODO Auto-generated method stub
 		log.info("remove......."+bno);
+		
+		//첨부파일도 함께 삭제
+		attachMapper.deleteAll(bno);
 		
 		return mapper.delete(bno)==1;
 	}
