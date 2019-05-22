@@ -71,6 +71,18 @@
 			<artifactId>jackson-dataformat-xml</artifactId>
 			<version>2.9.5</version>
 		</dependency>
+		<!-- 쿼츠 설정 주기적 실행 업로드 파일과 데이터베이스 주기적 비교-->
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz</artifactId>
+			<version>2.3.0</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz-jobs</artifactId>
+			<version>2.3.0</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.mybatis/mybatis -->
 		<dependency>
 			<groupId>org.mybatis</groupId>
